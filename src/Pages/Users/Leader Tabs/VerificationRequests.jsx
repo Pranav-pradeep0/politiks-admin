@@ -122,30 +122,35 @@ const VerificationRequests = () => {
       },
     },
     {
-      field: "actions",
+      field: "status",
       headerName: "Actions",
       renderCell: (value, row) => (
         <Box sx={{ display: "flex", gap: "5px" }}>
-          <Button
-            variant="contained"
-            color="success"
-            size="small"
-            sx={{
-              borderRadius: "5px",
-            }}
-          >
-            Approve
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            size="small"
-            sx={{
-              borderRadius: "5px",
-            }}
-          >
-            Decline
-          </Button>
+          {value === "Declined" ? (
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              sx={{
+                borderRadius: "5px",
+                width: "60px",
+              }}
+            >
+              Approve
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              sx={{
+                borderRadius: "5px",
+                width: "60px",
+              }}
+            >
+              Decline
+            </Button>
+          )}
         </Box>
       ),
     },
@@ -164,14 +169,6 @@ const VerificationRequests = () => {
       userid: 2,
       username: "jane_doe",
       email: "jane@example.com",
-      video: sampleVideoURL,
-      id: sampleImageURL,
-      status: "Pending",
-    },
-    {
-      userid: 3,
-      username: "john_doe",
-      email: "john@example.com",
       video: sampleVideoURL,
       id: sampleImageURL,
       status: "Declined",
@@ -231,6 +228,8 @@ const VerificationRequests = () => {
         >
           {selectedMedia && (
             <video
+              autoPlay
+              loop
               controls
               style={{ width: "100%", padding: 0, margin: 0, display: "block" }}
             >
