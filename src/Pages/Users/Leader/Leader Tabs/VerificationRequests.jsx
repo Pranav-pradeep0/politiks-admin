@@ -19,7 +19,7 @@ import {
   Paper,
 } from "@mui/material";
 import { Eye, Pencil, Trash, PlayCircle, X } from "@phosphor-icons/react";
-import theme from "../../../../theme";
+import theme from "../../../../../theme";
 
 // Sample video URL and image URL
 const sampleVideoURL = "https://www.w3schools.com/html/mov_bbb.mp4";

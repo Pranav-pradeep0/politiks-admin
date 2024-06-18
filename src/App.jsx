@@ -1,16 +1,26 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
+
 import Login from "./Pages/Login/Login";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Drawer, useMediaQuery } from "@mui/material";
 import Sidebar from "./Pages/Sidebar";
 import theme from "../theme";
 import Header from "./Components/Header";
-import Leaders from "./Pages/Users/Leaders";
 import Followerlist from "./Pages/Users/Followers/FollowerList";
 import Interests from "./Pages/Users/Interests/Interests";
+import Leaders from "./Pages/Users/Leader/Leaders";
+import { List } from "@phosphor-icons/react";
+import { useState } from "react";
 
 function App() {
   const matches = useMediaQuery("(min-width:800px)");
+
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -31,9 +41,30 @@ function App() {
       >
         <Sidebar />
       </Box>
+
+      <Drawer
+        sx={{
+          display: matches && "none",
+        }}
+        open={true}
+        onClose={toggleDrawer(false)}
+      >
+        <Box
+          sx={{
+            width: "220px",
+            backgroundColor: theme.palette.common.black,
+            height: "100vh",
+            color: "white",
+            paddingBlock: "30px",
+          }}
+        >
+          <Sidebar />
+        </Box>
+      </Drawer>
+
       <Box
         sx={{
-          marginLeft: "17%",
+          marginLeft: matches && "17%",
           flexGrow: 1,
           height: "100%",
           width: "83%",

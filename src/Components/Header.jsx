@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import PlaceholderImage from "../assets/ProfileImagePlaceholder.png";
-import { CaretDown } from "@phosphor-icons/react";
+import { CaretDown, List } from "@phosphor-icons/react";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -27,15 +27,21 @@ const Header = () => {
       sx={{
         borderBottom: "#b5b5b5 1px solid",
         paddingBlock: "18px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingInline: "15px",
       }}
     >
+      <IconButton color="inherit">
+        <List size={26} />
+      </IconButton>
       <div
         style={{
           backgroundColor: "#ECECEC",
           width: "min-content",
           borderRadius: "12px",
           marginLeft: "auto",
-          marginRight: "50px",
         }}
       >
         <IconButton

@@ -3,9 +3,9 @@ import { Box, Button, Tab, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { Plus } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
+import theme from "../../../../theme";
 import Leaderlist from "./Leader Tabs/Leaderlist";
 import VerificationRequests from "./Leader Tabs/VerificationRequests";
-import theme from "../../../theme";
 
 const tabs = [
   {

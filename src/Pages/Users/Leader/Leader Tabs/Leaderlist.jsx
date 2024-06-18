@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Button, Chip, IconButton, Switch } from "@mui/material";
-import DataTable from "../../../Components/DataTable";
+import DataTable from "../../../../Components/DataTable";
 import { Eye, Pencil, Trash } from "@phosphor-icons/react";
-import theme from "../../../../theme";
+import theme from "../../../../../theme";
 
 const Leaderlist = () => {
   const columns = [

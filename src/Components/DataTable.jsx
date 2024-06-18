@@ -10,7 +10,7 @@ import {
 
 const DataTable = ({ columns, rows }) => {
   return (
-    <Paper sx={{ borderRadius: "10px" }}>
+    <Paper sx={{ borderRadius: "10px", overflow: "auto" }}>
       <TableContainer sx={{ borderRadius: "10px" }}>
         <Table size="small" aria-label="simple table">
           <TableHead>
