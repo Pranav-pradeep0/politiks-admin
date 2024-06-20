@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Chip, IconButton, Switch } from "@mui/material";
 import { Eye, Pencil, Trash } from "@phosphor-icons/react";
 import theme from "../../../../theme";
 import DataTable from "../../../Components/DataTable";
 import TopAddNewBar from "../../../Components/TopAddNewBar";
+import { getAllFollowerDetails } from "../../../Service/allApi";
 
 const Followerlist = () => {
+  const [followerData, setFollowerData] = useState();
+
   const columns = [
     { field: "userid", headerName: "User ID" },
     { field: "username", headerName: "Username" },
@@ -17,37 +20,14 @@ const Followerlist = () => {
       headerName: "Status",
       renderCell: (value, row) => (
         <Switch
-          checked={row.status === "Active"}
+          checked={row.status}
           color="primary"
           inputProps={{ "aria-label": "controlled" }}
         />
       ),
     },
     {
-      field: "verification",
-      headerName: "Verification",
-      renderCell: (value, row) => {
-        let chipColor;
-        switch (row.verification) {
-          case "Verified":
-            chipColor = "success";
-            break;
-          case "Rejected":
-            chipColor = "error";
-            break;
-          case "Pending":
-            chipColor = "warning";
-            break;
-          default:
-            chipColor = "default";
-        }
-        return (
-          <Chip label={row.verification} color={chipColor} variant="outlined" />
-        );
-      },
-    },
-    {
-      field: "action",
+      field: "id",
       headerName: "Action",
       renderCell: (value, row) => (
         <Box
@@ -58,7 +38,7 @@ const Followerlist = () => {
           <IconButton>
             <Eye color="black" />
           </IconButton>
-          <IconButton onClick={() => handleEdit(row.userid)}>
+          <IconButton onClick={() => handleEdit(value)}>
             <Pencil color={theme.palette.info.main} />
           </IconButton>
           <IconButton>
@@ -69,39 +49,34 @@ const Followerlist = () => {
     },
   ];
 
-  const rows = [
-    {
-      userid: 1,
-      username: "alice_wonder",
-      email: "alice@example.com",
-      state: "Florida",
-      gender: "Female",
-      status: "Active",
-      verification: "Verified",
-    },
-    {
-      userid: 2,
-      username: "bob_builder",
-      email: "bob@example.com",
-      state: "Texas",
-      gender: "Male",
-      status: "Inactive",
-      verification: "Pending",
-    },
-    {
-      userid: 3,
-      username: "charlie_brown",
-      email: "charlie@example.com",
-      state: "Georgia",
-      gender: "Male",
-      status: "Active",
-      verification: "Rejected",
-    },
-  ];
+  const formatedRowsForDataTable = () => {
+    return followerData?.map((item, ind) => ({
+      slNo: ind + 1,
+      id: item.id,
+      userid: item.userId,
+      username: item.userName,
+      email: item.mailId,
+      state: item.state,
+      gender: item.gender,
+      status: item.status,
+    }));
+  };
+
+  const rows = formatedRowsForDataTable();
 
   const handleEdit = (userId) => {
     console.log(`Edit user with ID: ${userId}`);
   };
+
+  const fetchAllFollowers = async () => {
+    const response = await getAllFollowerDetails();
+    setFollowerData(response.data);
+    console.log(response);
+  };
+
+  useEffect(() => {
+    fetchAllFollowers();
+  }, []);
 
   return (
     <Box

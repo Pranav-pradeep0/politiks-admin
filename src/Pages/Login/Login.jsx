@@ -1,11 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import Banner from "../../assets/LoginBanner.svg";
 import { Box, Button, InputBase } from "@mui/material";
 import Logo from "../../assets/SidebarLogo.svg";
 import theme from "../../../theme";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../../Service/allApi";
+import { Slide, ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
+  const [loginData, setLoginData] = useState({
+    email: "admin@gmail.com",
+    password: "admin@123",
+  });
+
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setLoginData((data) => ({ ...data, [name]: value }));
+  };
+
+  const handleLogin = async () => {
+    const response = await login(loginData);
+    if (response.status === 200) {
+      localStorage.setItem("politiksAdminLogin", true);
+      toast.success("Logged in Successfully", {
+        autoClose: 1000,
+        transition: Slide,
+      });
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } else {
+      toast.error("Logged in Unsuccessfull", {
+        autoClose: 1000,
+        transition: Slide,
+      });
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -17,6 +50,7 @@ const Login = () => {
         },
       }}
     >
+      <ToastContainer position="top-center" transition={"Slide"} />
       <Box
         sx={{
           flexGrow: 1,
@@ -66,6 +100,9 @@ const Login = () => {
           >
             <InputBase
               type="email"
+              name="email"
+              value={loginData.email}
+              onChange={handleInputChange}
               sx={{
                 color: "white",
                 borderRadius: "30px",
@@ -86,6 +123,9 @@ const Login = () => {
             >
               <InputBase
                 type="password"
+                value={loginData.password}
+                name="password"
+                onChange={handleInputChange}
                 sx={{
                   color: "white",
                   borderRadius: "30px",
@@ -118,6 +158,7 @@ const Login = () => {
               borderRadius: "25px",
               paddingBlock: "10px",
             }}
+            onClick={handleLogin}
           >
             Login
           </Button>

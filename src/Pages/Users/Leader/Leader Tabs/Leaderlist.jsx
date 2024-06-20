@@ -1,10 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Chip, IconButton, Switch } from "@mui/material";
 import DataTable from "../../../../Components/DataTable";
 import { Eye, Pencil, Trash } from "@phosphor-icons/react";
 import theme from "../../../../../theme";
+import { getApprovedAdminList } from "../../../../Service/allApi";
 
 const Leaderlist = () => {
+  const [ApprovedLeaderDetails, setApprovedLeaderDetails] = useState();
+
+  const fetchApprovedAdminList = async () => {
+    const response = await getApprovedAdminList();
+    setApprovedLeaderDetails(response?.data);
+  };
+
+  const data = ApprovedLeaderDetails ? ApprovedLeaderDetails : [];
+
   const columns = [
     { field: "userid", headerName: "User ID" },
     { field: "username", headerName: "Username" },
@@ -16,33 +26,31 @@ const Leaderlist = () => {
       headerName: "Status",
       renderCell: (value, row) => (
         <Switch
-          checked={row.status === "Active"}
+          checked={value}
           color="primary"
           inputProps={{ "aria-label": "controlled" }}
         />
       ),
     },
     {
-      field: "verification",
+      field: "status",
       headerName: "Verification",
       renderCell: (value, row) => {
-        let chipColor;
-        switch (row.verification) {
-          case "Verified":
-            chipColor = "success";
-            break;
-          case "Rejected":
-            chipColor = "error";
-            break;
-          case "Pending":
-            chipColor = "warning";
-            break;
-          default:
-            chipColor = "default";
-        }
-        return (
-          <Chip label={row.verification} color={chipColor} variant="outlined" />
-        );
+        // let chipColor;
+        // switch (row.verification) {
+        //   case "Verified":
+        //     chipColor = "success";
+        //     break;
+        //   case "Rejected":
+        //     chipColor = "error";
+        //     break;
+        //   case "Pending":
+        //     chipColor = "warning";
+        //     break;
+        //   default:
+        //     chipColor = "default";
+        // }
+        return <Chip label={"Approved"} color={"success"} variant="outlined" />;
       },
     },
     {
@@ -68,30 +76,27 @@ const Leaderlist = () => {
     },
   ];
 
-  const rows = [
-    {
-      userid: 1,
-      username: "john_doe",
-      email: "john@example.com",
-      state: "California",
-      gender: "Male",
-      status: "Active",
-      verification: "Verified",
-    },
-    {
-      userid: 2,
-      username: "jane_doe",
-      email: "jane@example.com",
-      state: "New York",
-      gender: "Female",
-      status: "Inactive",
+  const formatedRowsForDataTable = () => {
+    return data?.map((item, ind) => ({
+      userid: item.userId,
+      username: item.userName,
+      email: item.mailId,
+      state: item.state,
+      gender: item.state,
+      status: item.status,
       verification: "Pending",
-    },
-  ];
+    }));
+  };
+
+  const rows = formatedRowsForDataTable();
 
   const handleEdit = (userId) => {
     console.log(`Edit user with ID: ${userId}`);
   };
+
+  useEffect(() => {
+    fetchApprovedAdminList();
+  }, []);
 
   return <DataTable columns={columns} rows={rows} />;
 };

@@ -6,13 +6,18 @@ import {
   Menu,
   MenuItem,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import React, { useState } from "react";
 import PlaceholderImage from "../assets/ProfileImagePlaceholder.png";
 import { CaretDown, List } from "@phosphor-icons/react";
+import { useNavigate } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ onMenuButtonClick }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const matches = useMediaQuery("(min-width:800px)");
+
+  const navigate = useNavigate();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -33,9 +38,11 @@ const Header = () => {
         paddingInline: "15px",
       }}
     >
-      <IconButton color="inherit">
-        <List size={26} />
-      </IconButton>
+      {!matches && (
+        <IconButton color="inherit" onClick={onMenuButtonClick}>
+          <List size={26} />
+        </IconButton>
+      )}
       <div
         style={{
           backgroundColor: "#ECECEC",
@@ -90,6 +97,14 @@ const Header = () => {
         >
           <MenuItem onClick={handleClose}>Profile</MenuItem>
           <MenuItem onClick={handleClose}>My account</MenuItem>
+          <MenuItem
+            onClick={() => {
+              localStorage.removeItem("politiksAdminLogin");
+              navigate("/login");
+            }}
+          >
+            Log Out
+          </MenuItem>
         </Menu>
       </div>
     </Box>

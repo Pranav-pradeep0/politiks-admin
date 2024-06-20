@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -20,37 +20,51 @@ import {
 } from "@mui/material";
 import { Eye, Pencil, Trash, PlayCircle, X } from "@phosphor-icons/react";
 import theme from "../../../../../theme";
+import {
+  getAllLeadersList,
+  updateSettingsDetails,
+  updateUserDetails,
+} from "../../../../Service/allApi";
 
-// Sample video URL and image URL
 const sampleVideoURL = "https://www.w3schools.com/html/mov_bbb.mp4";
 const sampleImageURL = "https://www.w3schools.com/w3images/lights.jpg";
 
 const VerificationRequests = () => {
-  // State to manage the modal open/close for video and image
   const [openVideoModal, setOpenVideoModal] = useState(false);
   const [openImageModal, setOpenImageModal] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState(null);
 
-  // Handle opening the video modal
   const handleOpenVideoModal = (videoUrl) => {
     setSelectedMedia(videoUrl);
     setOpenVideoModal(true);
   };
 
-  // Handle opening the image modal
   const handleOpenImageModal = (imageUrl) => {
     setSelectedMedia(imageUrl);
     setOpenImageModal(true);
   };
 
-  // Handle closing the modals
   const handleCloseModal = () => {
     setOpenVideoModal(false);
     setOpenImageModal(false);
     setSelectedMedia(null);
   };
 
-  // Define the columns
+  const [leaderDetails, setLeaderDetails] = useState();
+
+  const fetchLeaderDetails = async () => {
+    const response = await getAllLeadersList();
+    setLeaderDetails(response?.data?.leaders);
+  };
+
+  const handleStatusChange = async (action, id) => {
+    const response = await updateUserDetails(action, id);
+    console.log(response);
+    fetchLeaderDetails();
+  };
+
+  const data = leaderDetails ? leaderDetails : [];
+
   const columns = [
     { field: "userid", headerName: "User ID" },
     { field: "username", headerName: "Username" },
@@ -101,11 +115,11 @@ const VerificationRequests = () => {
       ),
     },
     {
-      field: "status",
+      field: "action",
       headerName: "Status",
       renderCell: (value, row) => {
         let chipColor;
-        switch (row.status) {
+        switch (value.verification) {
           case "Approved":
             chipColor = "success";
             break;
@@ -118,27 +132,48 @@ const VerificationRequests = () => {
           default:
             chipColor = "default";
         }
-        return <Chip label={row.status} color={chipColor} variant="outlined" />;
+        return (
+          <Chip
+            label={value.verification}
+            color={chipColor}
+            variant="outlined"
+          />
+        );
       },
     },
     {
-      field: "status",
+      field: "action",
       headerName: "Actions",
       renderCell: (value, row) => (
-        <Box sx={{ display: "flex", gap: "5px" }}>
-          {value === "Declined" ? (
-            <Button
-              variant="contained"
-              color="success"
-              size="small"
-              sx={{
-                borderRadius: "5px",
-                width: "60px",
-              }}
-            >
-              Approve
-            </Button>
-          ) : (
+        <Box sx={{ display: "flex", gap: "5px", justifyContent: "center" }}>
+          {value.verification === "Pending" ? (
+            <Box sx={{ display: "flex", gap: "10px" }}>
+              <Button
+                variant="contained"
+                color="success"
+                size="small"
+                sx={{
+                  borderRadius: "5px",
+                  width: "60px",
+                }}
+                onClick={() => handleStatusChange(true, value?.id)}
+              >
+                Approve
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                size="small"
+                sx={{
+                  borderRadius: "5px",
+                  width: "60px",
+                }}
+                onClick={() => handleStatusChange(false, value?.id)}
+              >
+                Decline
+              </Button>
+            </Box>
+          ) : value.verification === "Approved" ? (
             <Button
               variant="contained"
               color="error"
@@ -147,8 +182,22 @@ const VerificationRequests = () => {
                 borderRadius: "5px",
                 width: "60px",
               }}
+              onClick={() => handleStatusChange(false, value?.id)}
             >
               Decline
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="success"
+              size="small"
+              sx={{
+                borderRadius: "5px",
+                width: "60px",
+              }}
+              onClick={() => handleStatusChange(true, value?.id)}
+            >
+              Approve
             </Button>
           )}
         </Box>
@@ -156,24 +205,26 @@ const VerificationRequests = () => {
     },
   ];
 
-  const rows = [
-    {
-      userid: 1,
-      username: "john_doe",
-      email: "john@example.com",
-      video: sampleVideoURL,
-      id: sampleImageURL,
-      status: "Approved",
-    },
-    {
-      userid: 2,
-      username: "jane_doe",
-      email: "jane@example.com",
-      video: sampleVideoURL,
-      id: sampleImageURL,
-      status: "Declined",
-    },
-  ];
+  const formatedRowsForDataTable = () => {
+    return data?.map((item, ind) => ({
+      userid: item.userId,
+      username: item.userName,
+      email: item.mailId,
+      video: item.verificationDetails?.verificationVideo,
+      id: item.verificationDetails?.verificationImage,
+      action: {
+        verification: item.action,
+        id: item.userId,
+      },
+      status: item.status,
+    }));
+  };
+
+  const rows = formatedRowsForDataTable();
+
+  useEffect(() => {
+    fetchLeaderDetails();
+  }, []);
 
   return (
     <>
@@ -271,7 +322,6 @@ const VerificationRequests = () => {
           {selectedMedia && (
             <img
               src={selectedMedia}
-              alt="ID Preview"
               style={{
                 width: "100%",
                 height: "auto",

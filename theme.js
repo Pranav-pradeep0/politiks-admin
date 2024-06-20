@@ -26,6 +26,7 @@ const theme = createTheme({
     },
     common: {
       black: "#000000",
+      grey: "#F5F5F5",
     },
   },
   typography: {
@@ -57,7 +58,7 @@ const theme = createTheme({
     },
     h6: {
       fontWeight: 700,
-      fontSize: "18px",
+      fontSize: "16px",
     },
     subtitle1: {
       fontWeight: 400,
