@@ -13,6 +13,8 @@ import Leaders from "./Pages/Users/Leader/Leaders";
 import { List } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import Settings from "./Pages/Settings/Settings";
+import Admin from "./Pages/Admin/Admin";
+import AddNewAdmin from "./Pages/Admin/AddNewAdmin";
 
 function App() {
   const matches = useMediaQuery("(min-width:800px)");
@@ -33,6 +35,14 @@ function App() {
     }
   }, [isLoggedin]);
 
+  const subadminroutes = [
+    { Users: "read and write" },
+    { "CMS Page": "read only" },
+    { Notifications: "read only" },
+  ];
+
+  const role = "admin";
+
   if (isLoggedin) {
     return (
       <Box sx={{ display: "flex" }}>
@@ -51,7 +61,7 @@ function App() {
             display: !matches && "none",
           }}
         >
-          <Sidebar />
+          <Sidebar role={role} permissions={subadminroutes} />
         </Box>
 
         <Drawer
@@ -70,7 +80,7 @@ function App() {
               paddingBlock: "30px",
             }}
           >
-            <Sidebar />
+            <Sidebar role={role} permissions={subadminroutes} />
           </Box>
         </Drawer>
 
@@ -92,6 +102,10 @@ function App() {
 
             {/* Settings */}
             <Route path="/settings" element={<Settings />} />
+
+            {/* Admin */}
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/addnew" element={<AddNewAdmin />} />
           </Routes>
         </Box>
       </Box>

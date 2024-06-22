@@ -13,6 +13,7 @@ import {
   ShoppingCart,
   SquaresFour,
   TextIndent,
+  UserGear,
   Users,
 } from "@phosphor-icons/react";
 import theme from "../../../theme";
@@ -53,13 +54,41 @@ const sidebarButtons = [
     route: "/notifications",
   },
   {
+    icon: <UserGear size={22} />,
+    text: "Admin",
+    route: "/admin",
+  },
+  {
     icon: <Gear size={22} />,
     text: "Settings",
     route: "/settings",
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ role, permissions }) => {
+  const permissionMapping = {
+    Users: "/users",
+    "CMS Page": "/cms",
+    Dashboard: "/",
+    Notifications: "/notifications",
+    Admin: "/admin",
+    Settings: "/settings",
+  };
+
+  const filterSidebarItems = (role, permissions) => {
+    if (role === "admin") {
+      return sidebarButtons;
+    }
+
+    const allowedTexts = permissions.map((p) => Object.keys(p)[0]);
+
+    return sidebarButtons.filter((button) =>
+      allowedTexts.includes(button.text)
+    );
+  };
+
+  const filteredButtons = filterSidebarItems(role, permissions);
+
   return (
     <Box
       sx={{
@@ -85,7 +114,7 @@ const Sidebar = () => {
         </span>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <SidebarList buttonList={sidebarButtons} />
+        <SidebarList buttonList={filteredButtons} />
       </Box>
     </Box>
   );
